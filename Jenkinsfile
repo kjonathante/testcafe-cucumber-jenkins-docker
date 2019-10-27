@@ -1,12 +1,16 @@
 node {
   stage('First') {
     checkout scm
-    def browsers = docker.build('browsers:latest','docker/browsers/')
-    browsers.inside {
+    def browsersContainer = docker.build('browsers:latest','docker/browsers/')
+    browsersContainer.inside {
       sh 'npm install'
-      sh 'npm run testDockerChrome'
+      test('Chrome')
       sh 'npm run generateHtmlReport'
       sh 'ls -la > results.txt'
     }
   }
+}
+
+def test(BROWSER) {
+  sh "npm run testDocker${BROWSER}"
 }
