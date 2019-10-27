@@ -26,5 +26,13 @@ def publishReports() {
   String datePart = date.format('dd/MM/yyyy')
   String timePart = date.format('HH:mm:ss')
   GString dateTime = "_${datePart}_${timePart}"
-  echo dateTime
+  publishHTML([
+    allowMissing: false,
+    alwaysLinkToLastBuild: false,
+    keepAll: true,
+    reportDir: 'reports/combined',
+    reportFiles: 'index.html',
+    reportName: "HTML Report${dateTime}",
+    reportTitles: ''
+  ])  
 }
