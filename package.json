@@ -8,15 +8,18 @@
   "scripts": {
     "clean-reports": "rm -rf reports/*",
     "test-chrome-report": "./node_modules/.bin/cucumber-js  --format json:./reports/chrome.json --world-parameters \"{\\\"browser\\\": \\\"chrome\\\"}\"",
-    "generate-report": "rm -rf reports/combined && node src/prepareJson && node src/generateHtml",
     "open-in-browser": "/usr/bin/open -a \"/Applications/Google Chrome.app\" 'reports/combined/index.html'",
+
     "testChrome": "cucumber-js --format json:reports/Chrome.json --world-parameters \"{\\\"browser\\\": \\\"chrome\\\"}\"",
+    "testDockerChrome": "xvfb-run --server-num=99 --server-args='-ac -screen 0 1024x768x16' npm run testChrome",
+
     "testFirefox": "cucumber-js  --format json:reports/Firefox.json --world-parameters \"{\\\"browser\\\": \\\"chrome\\\"}\"",
+    "testDockerFirefox": "xvfb-run --server-num=99 --server-args='-ac -screen 0 1024x768x16' npm run testFirefox",
+
     "generateHtmlReport": "rm -rf reports/combined && node src/prepareJson && node src/generateHtml",
+
     "e2e": "mkdir -p reports; npm run testChrome; npm run testFirefox; npm run generateHtmlReport",
     "e2edocker": "xvfb-run --server-num=99 --server-args='-ac -screen 0 1024x768x16' npm run e2e",
-    "testDockerChrome": "xvfb-run --server-num=99 --server-args='-ac -screen 0 1024x768x16' npm run testChrome",
-    "testDockerFirefox": "xvfb-run --server-num=99 --server-args='-ac -screen 0 1024x768x16' npm run testFirefox",
     "buildBrowsers": "docker build -t browsers docker/browsers/",
     "buildJenkins": "mkdir -p $npm_package_jenkinsJobPath && cp -Ra $npm_package_jenkinsJobConfigPath/* $npm_package_jenkinsJobPath && docker build -t jenkinstescafe docker/jenkins/",
     "stopBrowsers": "docker stop $(docker ps -qa --filter ancestor=browsers)",
