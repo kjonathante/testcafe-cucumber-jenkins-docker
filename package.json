@@ -1,0 +1,47 @@
+{
+  "name": "cucumber-testcafe-simple",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "jenkinsJobPath": "jenkins_home/jobs/",
+  "jenkinsJobConfigPath": "docker/jenkins/config/jobs",
+  "scripts": {
+    "clean-reports": "rm -rf reports/*",
+    "test-chrome-report": "./node_modules/.bin/cucumber-js  --format json:./reports/chrome.json --world-parameters \"{\\\"browser\\\": \\\"chrome\\\"}\"",
+    "generate-report": "rm -rf reports/combined && node src/prepareJson && node src/generateHtml",
+    "open-in-browser": "/usr/bin/open -a \"/Applications/Google Chrome.app\" 'reports/combined/index.html'",
+    "testChrome": "cucumber-js --format json:reports/Chrome.json --world-parameters \"{\\\"browser\\\": \\\"chrome\\\"}\"",
+    "testFirefox": "cucumber-js  --format json:reports/Firefox.json --world-parameters \"{\\\"browser\\\": \\\"chrome\\\"}\"",
+    "generateHtmlReport": "rm -rf reports/combined && node src/prepareJson && node src/generateHtml",
+    "e2e": "mkdir -p reports; npm run testChrome; npm run testFirefox; npm run generateHtmlReport",
+    "e2edocker": "xvfb-run --server-num=99 --server-args='-ac -screen 0 1024x768x16' npm run e2e",
+    "testDockerChrome": "xvfb-run --server-num=99 --server-args='-ac -screen 0 1024x768x16' npm run testChrome",
+    "testDockerFirefox": "xvfb-run --server-num=99 --server-args='-ac -screen 0 1024x768x16' npm run testFirefox",
+    "buildBrowsers": "docker build -t browsers docker/browsers/",
+    "buildJenkins": "mkdir -p $npm_package_jenkinsJobPath && cp -Ra $npm_package_jenkinsJobConfigPath/* $npm_package_jenkinsJobPath && docker build -t jenkinstescafe docker/jenkins/",
+    "stopBrowsers": "docker stop $(docker ps -qa --filter ancestor=browsers)",
+    "stopJenkins": "docker stop $(docker ps -qa --filter ancestor=jenkinstescafe)",
+    "startJenkins": "_pwd=\"$(pwd)\" && docker run -d -p 8080:8080 -p 50000:50000 --env JAVA_OPTS=\"-Dorg.jenkinsci.plugins.durabletask.BourneShellScript.HEARTBEAT_CHECK_INTERVAL=30\" -v $_pwd/jenkins_home:/var/jenkins_home -v /var/run/docker.sock:/var/run/docker.sock jenkinstescafe:latest",
+    "buildContainers": "npm run buildBrowsers && npm run buildJenkins"
+  },
+  "bin": {
+    "cucumber-js": "./node_modules/.bin/cucumber-js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kjonathante/cucumber-testcafe-simple.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/kjonathante/cucumber-testcafe-simple/issues"
+  },
+  "homepage": "https://github.com/kjonathante/cucumber-testcafe-simple#readme",
+  "dependencies": {
+    "base64-img": "^1.0.4",
+    "cucumber": "^5.1.0",
+    "multiple-cucumber-html-reporter": "^1.13.1",
+    "testcafe": "^1.6.0"
+  }
+}
