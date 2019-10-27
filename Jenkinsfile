@@ -5,13 +5,9 @@ node {
     browsersContainer.inside {
       sh 'npm install'
 
-      stage('Test in Chrome') {
-        test('Chrome')
-      }
+      test('Chrome')
 
-      stage('Publish Report') {
-        publishReports()
-      }
+      publishReports()
 
     }
   }
